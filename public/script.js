@@ -7,26 +7,27 @@ var peer = new Peer(undefined, {
 });
 
 const user = prompt("Enter your name");
-const myVedio=document.createElement("video");
-myVedio.muted=true;
+
+const myVideo = document.createElement("video");
+myVideo.muted = true;
+
 let myStream;
 
 navigator.mediaDevices
     .getUserMedia({
         audio: true,
-        vedio: true,
-
+        video: true,
     })
-    .then((stream)=>{
-        myStream=stream;
-        addVideoStream(myVedio,stream);
-
+    .then((stream) => {
+        myStream = stream;
+        addVideoStream(myVideo, stream);
     })
-function addVideoStream(video,stream){
-    video.srcObject=stream;
-    video.addVideoListener("loadedmetadata",()=>{
+
+function addVideoStream(video, stream) {
+    video.srcObject = stream;
+    video.addEventListener("loadedmetadata", () => {
         video.play();
-        $("#video_grid").append(vedio)
+        $("#video_grid").append(video)
     });
 };
 
