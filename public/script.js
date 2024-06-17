@@ -21,6 +21,17 @@ navigator.mediaDevices
     .then((stream) => {
         myStream = stream;
         addVideoStream(myVideo, stream);
+        socket.on("user-connected",(userId)=>{
+            connectToNewUser(userId,stream);
+
+        });
+        peer.on("call",(call)=>{
+            call.answer(stream);
+            const video=document.createElement("video");
+            call.on("stream",(userVideoStream)=>{
+                addVideoStream(video,userVideoStream);
+            });
+        });
     })
 
 function addVideoStream(video, stream) {
@@ -30,7 +41,13 @@ function addVideoStream(video, stream) {
         $("#video_grid").append(video)
     });
 };
-
+function connectToNewUser(userId,stream){
+    const call=peer.call(userId,stream);
+    const video=document.createElement("vedio");
+    call.on("stream",(userVideoStream)=>{
+        addVideoStream(video,userVideoStream);
+    });
+};
 $(function () {
     $("#show_chat").click(function () {
         $(".left-window").css("display", "none")
@@ -56,7 +73,39 @@ $(function () {
             $("#chat_message").val("");
         }
     })
+$("mute_button").click(function(){
+    if (enabled){
+        myStream.getAudioTracks()[0].enabled=false;
+        html=<i class="fas fa-microphone-slash"></i>;
+        $("mute_button").toggleclass("background_red");
+        $("mute_button").html(html)
 
+
+    }else{
+        myStream.getAudioTracks()[0].enabled=true;
+        html=<i class="fas fa-microphone-slash"></i>;
+        $("mute_button").toggleclass("background_red");
+        $("mute_button").html(html)
+
+    }
+})
+$("stop_video").click(function(){
+    const enabled=myStream.getVideoTracks()[0].enabled;
+    if (enabled){
+        myStream.getVideoTracks()[0].enabled=false;
+        html=<i class="fas fa-video-slash"></i>;
+        $("stop_video").toggleclass("background_red");
+        $("stop_video").html(html)
+
+
+    }else{
+        myStream.getVideoTracks()[0].enabled=true;
+        html=<i class="fas fa-video-slash"></i>;
+        $("stop_video").toggleclass("background_red");
+        $("stop_video").html(html)
+
+    }
+})
 })
 
 peer.on("open", (id) => {
