@@ -26,7 +26,6 @@ navigator.mediaDevices
             connectToNewUser(userId, stream);
         });
 
-        //handling a new joinee
         peer.on("call", (call) => {
             call.answer(stream);
             const video = document.createElement("video");
@@ -91,6 +90,28 @@ $(function () {
             $("#mute_button").toggleClass("background_red");
             $("#mute_button").html(html)
         }
+    })
+
+    $("#invite_button").click(function(){
+        const to=prompt("enter the email address")
+        let data={
+            url:window.location.href,
+            to:to
+        }
+        console.log("url,to:",data.url,data.to)
+        $.ajax({
+            url:"/send-mail",
+            type:"post",
+            data:JSON.stringify(data),
+            dataType:'json',
+            contentType:'application/json',
+            success:function(result){
+                alert("Invite sent!")
+            },
+            error:function(result){
+                console.log(result.responseJSON)
+            }
+        })
     })
 
     $("#stop_video").click(function () {
